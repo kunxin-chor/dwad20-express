@@ -6,6 +6,11 @@ let app = express();
 // SET THE VIEW ENGINE (aka. the template engine)
 app.set('view engine', 'hbs');  // <-- tell Express we are using handlebars as the view engine
 
+// TELL EXPRESS WHERE TO FIND THE STATIC
+app.use(express.static('public')); 
+// the first parameter to express.static is the directory
+// where the static files in
+
 // 2. ROUTES
 app.get("/", function(req,res){
     // tells Express to take the content of 'index.hbs'
@@ -13,6 +18,7 @@ app.get("/", function(req,res){
     // the first parameter is the name of the hbs file
     // (the extension is optional)
     // the path is ALWAYS relative to the /views folder
+    console.log("Hello from server");
     res.render('index.hbs');
 })
 
