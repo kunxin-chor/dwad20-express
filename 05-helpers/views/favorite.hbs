@@ -1,0 +1,15 @@
+{{#extends "base"}}
+
+{{#block "content"}}
+
+{{!-- ifEquals is a custom helper and does not exist
+it's up to the programmer to create it --}}
+{{#ifEquals fruit "apples"}}
+<p>Yes you are keeping away the doctors</p>
+{{else}}
+<p>You got plenty of fibre</p>
+{{/ifEquals}}
+
+{{/block}}
+
+{{/extends}}

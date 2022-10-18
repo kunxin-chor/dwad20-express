@@ -1,0 +1,15 @@
+{{#extends 'base'}}
+
+{{#block "content"}}
+<h1>Fruits</h1>
+
+<ul>
+    {{!-- ["apples", "bananas", "cherries", "oranges"] --}}
+    {{#each fruits}}
+    <li>{{this}}</li>
+    {{/each}}
+</ul> 
+
+{{/block}}
+
+{{/extends}}
