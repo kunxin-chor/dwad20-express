@@ -13,7 +13,7 @@ let foodRecords = [
         "foodName": "Chicken Rice",
         "calories": 700,
         "meal":"lunch",
-        "tags":["home-cooked"]
+        "tags":["home-cooked", "organic"]
     },
     {
         "id": 1002,
@@ -36,6 +36,11 @@ let app = express(); //create the express application
 app.set('view engine', 'hbs'); // inform express that we are using hbs as the view engine
 waxOn.on(hbs.handlebars); // enable wax-on for handlebars (for template inheritance)
 waxOn.setLayoutPath('./views/layouts') // inform wax-on where to find the layouts
+
+// setup the 189 handlebars helpers
+require('handlebars-helpers')({
+    handlebars: hbs.handlebars
+})
 
 app.use(express.urlencoded({
     'extended':false // for processing HTML forms usually it's false because
@@ -95,6 +100,62 @@ app.post('/add-food', function(req,res){
     res.redirect("/all-food");
 
   
+})
+
+// U: update -- we want to update one particular record
+app.get("/update-food/:food_record_id", function(req, res){
+    // req.params.food_record_id will store the 'id' of the record that we want to update
+    
+    // step 1: find the food record that we want to update
+    let foodRecord = null; // this is a state variable to store food record that we want to edit
+    for (let record of foodRecords) {
+        // we check if the current record that we are looking at:
+        // if its id matches the id of what we want to edit
+        // then that food record is what we are looking for
+        if (record.id == req.params.food_record_id) {
+            foodRecord = record;
+            break;
+        }
+        // foodRecord should store the food record object that we want to update
+    }
+    res.render('update-food',{
+        "foodRecord": foodRecord
+    })
+})
+
+app.post("/update-food/:food_record_id", function(req,res){
+
+    let selectedTags = [];
+    if (Array.isArray(req.body.tags)) {
+        selectedTags = req.body.tags;
+    } else if (req.body.tags) {
+        selectedTags.push(req.body.tags);
+    }
+
+    // let selectedTags = Array.isArray(req.body.tags) ? req.body.tags : ( req.body.tags ? [ req.body.tags] : [] );
+
+    let newFoodRecord = {
+        "id": req.params.food_record_id, 
+        "foodName": req.body.foodName,
+        "calories": req.body.calories,
+        "meal": req.body.meal,
+        "tags": selectedTags
+    }
+
+    // find the index of food record that we want to replace
+    let index = -1;
+    for (let i =0; i < foodRecords.length; i++) {
+        if (foodRecords[i].id == req.params.food_record_id) {
+            index = i;
+            break;
+        }
+    }
+
+    // index should store the index of the original food record
+    // replacing the original food record with the new food record
+    foodRecords[index] = newFoodRecord;
+
+    res.redirect('/all-food')
 })
 
 app.listen(3000, function(){
