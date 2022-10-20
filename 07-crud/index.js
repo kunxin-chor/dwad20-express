@@ -97,7 +97,8 @@ app.post('/add-food', function(req,res){
 
     // redirect: it tells the browser to go to a different URL
     // to display all the foods again, we redirect to the /all-food
-    res.redirect("/all-food");
+    // res.redirect("/all-food");
+    res.send("Food added");
 
   
 })
