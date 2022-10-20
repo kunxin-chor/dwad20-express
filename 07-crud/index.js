@@ -159,6 +159,33 @@ app.post("/update-food/:food_record_id", function(req,res){
     res.redirect('/all-food')
 })
 
+app.get('/delete-food/:food_record_id', function(req,res){
+    let foodRecord = foodRecords.find(function(eachRecord){
+        if (eachRecord.id == req.params.food_record_id) {
+            return true;
+        } else {
+            return false;
+        }
+    });
+    res.render('delete-food', {
+        foodRecord: foodRecord
+    })
+})
+
+app.post('/delete-food/:food_record_id', function(req,res){
+    let indexToDelete = foodRecords.findIndex(function(currentRecord){
+        if (currentRecord.id == req.params.food_record_id) {
+            return true;
+        } else {
+            return false;
+        }
+    });
+
+    // splice(<start index to delete from>, <how many to delete>)
+    foodRecords.splice(indexToDelete, 1);
+    res.redirect("/all-food");
+})
+
 app.listen(3000, function(){
     console.log("server started");
 })
