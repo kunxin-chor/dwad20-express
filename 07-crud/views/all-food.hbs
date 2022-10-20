@@ -1,0 +1,29 @@
+{{#extends "base"}}
+
+{{#block "content"}}
+
+{{!-- For each item in the allFood --}}
+
+<a href="/add-food" class="btn btn-primary">Add New</a>
+
+{{#each allFood}}
+<div class="card mt-3" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title">{{this.foodName}}</h5>
+    <div class="card-text">
+        <ul>
+            <li>Calories: {{this.calories}}</li>
+            <li>Meal: {{this.meal}}</li>
+            <li>Tags: {{this.tags}}</li>
+        </ul>
+
+    </div>
+    <a href="#" class="btn btn-primary">Go somewhere</a>
+  </div>
+</div>
+{{/each}}
+
+
+{{/block}}
+
+{{/extends}}

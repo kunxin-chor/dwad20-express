@@ -1,0 +1,55 @@
+{{#extends "base"}}
+
+{{#block "content"}}
+<form method="POST">
+    <div>
+        <label>Food Name:</label>
+        {{!-- Only the value and the name of the form element will be sent to the server.
+        'class' and 'id' are strictly for client-side programming
+         The value of the name attribute will be the key to retreive
+         the content of the form element in Express
+         --}}
+        <input type="text" class="form-control" name="foodName" id="foodName"/>
+    </div>
+
+    <div>
+        <label>Calories:</label>
+        <input type="text" class="form-control" name="calories"/>
+    </div>
+
+    <div>
+        <label>Meal:</label>
+        <input type="radio" class="form-check-input" name="meal" value="breakfast"/>
+        <label>Breakfast</label>
+
+        <input type="radio" class="form-check-input" name="meal" value="lunch"/>
+        <label>Lunch</label>
+
+        <input type="radio" class="form-check-input" name="meal" value="dinner"/>
+        <label>Dinner</label>
+
+    </div>
+
+    <div>
+        <label>Tags</label>
+        <input type="checkbox" class="form-check-input" name="tags" value="homecooked"/>
+        <label>Homecooked</label>
+
+        <input type="checkbox" class="form-check-input" name="tags" value="organic"/>
+        <label>Organic</label>
+
+        <input type="checkbox" class="form-check-input" name="tags" value="vegan"/>
+        <label>Vegan</label>
+
+        <input type="checkbox" class="form-check-input" name="tags" value="unhealthy"/>
+        <label>Unhealthy</label>
+
+    </div>
+
+
+    {{!-- The submit button allows us to submit a form to a server --}}
+    <input type="submit" value="Add new" class="btn btn-primary mt-3"/>
+</form>
+{{/block}}
+
+{{/extends}}
