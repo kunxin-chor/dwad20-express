@@ -107,6 +107,62 @@ async function main() {
         })
     })
 
+
+    app.get('/food/:food_id/update-note/:note_id', async function(req,res){
+        // we need get the document and the sub-document
+        let db = MongoUtil.getDB();
+        // store the note_id parameter into the noteId variable
+        let noteId = req.params.note_id;
+        let foodRecord = await db.collection(COLLECTION).findOne({
+            _id:ObjectId(req.params.food_id)
+        },{
+           
+            'projection':{
+                'foodRecordName':1,
+                 // only show the element from the notes array where its _id matches
+                // the one in the noteId variable
+                'notes':{
+                   "$elemMatch":{
+                    "_id":ObjectId(noteId)
+                   }
+                }
+            }
+        });
+        
+        res.render('update-note',{
+            'foodRecord': foodRecord
+        })
+    })
+
+    app.post('/food/:food_id/update-note/:note_id', async function(req,res){
+    
+        await MongoUtil.getDB().collection(COLLECTION)
+            .updateOne({
+                "_id": ObjectId(req.params.food_id),
+                "notes._id": ObjectId(req.params.note_id)
+            },{
+                '$set':{
+                    'notes.$.content': req.body.content
+                }
+            })
+        res.redirect('/food/' + req.params.food_id);
+    })
+
+    app.get('/food/:food_id/delete-note/:note_id', async function(req,res){
+        await MongoUtil.getDB().collection(COLLECTION)
+            .updateOne({
+                "_id": ObjectId(req.params.food_id),
+            },{
+                "$pull":{
+                    'notes':{
+                        "_id": ObjectId(req.params.note_id)
+                    }
+                }
+            })
+
+            res.redirect('/food/' + req.params.food_id);
+    })
+
     app.post('/add-food', function(req,res){
         // the data of the form is inside `req.body`
         // let foodRecordName = req.body.foodRecordName;
