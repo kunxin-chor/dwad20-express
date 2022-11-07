@@ -29,6 +29,8 @@ app.use(express.urlencoded({
     'extended': false
 }));
 
+const COLLECTION = "food_records";
+
 async function main() {
 
     // before we set up the routes, we connect to the database
@@ -46,9 +48,9 @@ async function main() {
     // ROUTES
     app.get('/', async function(req,res){
         let db = MongoUtil.getDB();
-        let foodRecords = await db.collection('food_records').find({
+        let foodRecords = await db.collection(COLLECTION).find({
 
-        }).toArray();
+        }).toArray();  // if we use .find, we need to convert the result value to array before we can use it
 
         console.log(foodRecords);
 
@@ -59,6 +61,50 @@ async function main() {
 
     app.get('/add-food', function(req,res){
         res.render('add-food')
+    })
+
+    app.get('/food/:food_id/add-note', async function(req,res){
+        let foodRecord = await MongoUtil.getDB().collection(COLLECTION).findOne({
+            _id:ObjectId(req.params.food_id)
+        });
+
+        res.render('add-note',{
+            'foodRecord': foodRecord
+        })
+    })
+
+    app.post('/food/:food_id/add-note', async function(req,res){
+        // we want to add a new sub-document (aka embedded document)
+        // to the document with the matching food_id
+        let db = MongoUtil.getDB();
+
+        let newNote = {
+            "_id": ObjectId(),  // we need to provide the _id manually for sub-documents
+            "content": req.body.content
+        }
+
+        // we are updating the existing document to ADD a new embedded document
+        // so we use updateOne instead of insertOne
+        db.collection(COLLECTION).updateOne({
+            "_id":ObjectId(req.params.food_id)
+        },{
+            "$push":{
+                'notes':newNote  // push the sub document into the array
+            }
+        })
+
+        res.redirect('/food/'+req.params.food_id)
+
+    } )
+
+    app.get('/food/:food_id', async function(req,res){
+        let foodRecord = await MongoUtil.getDB().collection(COLLECTION).findOne({
+            _id:ObjectId(req.params.food_id)
+        });
+
+        res.render('food-details',{
+            "foodRecord": foodRecord
+        })
     })
 
     app.post('/add-food', function(req,res){
@@ -87,7 +133,7 @@ async function main() {
 
         // the insertOne function allows us to add a record to 
         // a collection in the database
-        db.collection("food_records").insertOne({
+        db.collection(COLLECTION).insertOne({
             "foodRecordName": foodRecordName,
             "calories": calories,
             "tags": tags
@@ -144,7 +190,7 @@ async function main() {
         }
 
         // find the document that we want to update
-        await MongoUtil.getDB().collection('food_records').updateOne({
+        await MongoUtil.getDB().collection(COLLECTION).updateOne({
             _id:ObjectId(req.params.food_id)
         },{
             // replace each key in the document with the value read in from the form
@@ -157,6 +203,26 @@ async function main() {
 
         res.redirect('/')
 
+    })
+
+    app.get('/delete-food/:food_id', async function(req,res){
+        let db = MongoUtil.getDB();
+        let foodRecord = await db.collection(COLLECTION).findOne({
+            "_id": ObjectId(req.params.food_id)
+        });
+        console.log(foodRecord);
+        res.render('delete-food',{
+            'foodRecord': foodRecord
+        })
+    })
+
+    app.post('/delete-food/:food_id', async function(req,res){
+        let db = MongoUtil.getDB();
+        await db.collection(COLLECTION).deleteOne({
+            "_id":ObjectId(req.params.food_id)
+        })
+
+        res.redirect('/');
     })
 }
 main();
