@@ -11,6 +11,7 @@
             <th>Name</th>
             <th>Calories</th>
             <th>Tags</th>
+            <th></th>
         </tr>
     </thead>
     {{#each foodRecords}}
@@ -21,6 +22,9 @@
             {{#each this.tags}}
             <span class="badge bg-primary">{{this}}</span>
             {{/each}}
+        </td>
+        <td>
+            <a href="/update-food/{{this._id}}" class="btn btn-primary btn-sm">Edit</a>
         </td>
     </tr>
 
