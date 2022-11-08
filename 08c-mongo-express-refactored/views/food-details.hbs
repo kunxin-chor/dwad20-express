@@ -1,0 +1,29 @@
+{{#extends 'base'}}
+
+{{#block "content"}}
+<h1>{{foodRecord.foodRecordName}}</h1>
+<ul>
+    <li>Calories: {{foodRecord.calories}}</li>
+    <li>Tags: {{foodRecord.tags}}</li>
+</ul>
+<a href="/food/{{foodRecord._id}}/add-note" class="btn btn-primary">Add Note</a>
+
+<h2>Notes</h2>
+<ul class="list-group">
+{{#each foodRecord.notes}}
+    <li class="list-group-item">
+        <div>
+            {{this.content}}
+        </div>
+        {{!-- we use `../foodRecord._id` to indicate that we want to refer to the
+        foodRecord placeholder is outside the each block --}}
+        <a href="/food/{{../foodRecord._id}}/update-note/{{this._id}}" class="btn btn-primary btn-sm">Update</a>
+        <a href="/food/{{../foodRecord._id}}/delete-note/{{this._id}}" class="btn btn-danger btn-sm">Delete</a>
+
+    </li>
+{{/each}}
+</ul>
+
+{{/block}}
+
+{{/extends}}

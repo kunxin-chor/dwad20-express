@@ -30,6 +30,8 @@ async function main() {
         res.send("hello world");
     })
 
+    // POST /food-sightings --> can infer from the POST verb that the route
+    // is to add a new food sighting
     // endpoint to allow clients to add in a new food sighting
     // the client must provide the following key/value pairs
     // - description: string
@@ -76,6 +78,7 @@ async function main() {
     })
 
     // we use the HTTP 'get' verb for any endpoints that retrieve data
+    // GET /food-sightings -> infer is to retrieve food sightings
     app.get('/food-sightings', async function (req, res) {
 
         console.log(req.query);
@@ -111,6 +114,9 @@ async function main() {
 
     })
 
+    // this route is to update a food sighting by its id
+    // PUT /food-sightings/:sighting_id is enough to inform the developer or
+    // the reader that this route is to update a food sighting
     app.put('/food-sightings/:sighting_id', async function(req,res){
         try {
 
@@ -147,6 +153,7 @@ async function main() {
         }
     })
 
+    // DELETE /food-sightings/:sighting_id -> can infer this is to delete a food sighting
     app.delete('/food-sightings/:sighting_id', async function(req,res){
         try {
             await MongoUtil.getDB().collection('sightings').deleteOne({
@@ -167,6 +174,12 @@ async function main() {
         }
     })
 
+    // for processes we think about the new document that it will create and we
+    // use that the url
+    // POST /account --> we can infer this is to create a new account
+    // app.post('/account')
+
+    // app.post('/user')
 
 }
 main();
