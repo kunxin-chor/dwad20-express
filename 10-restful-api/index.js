@@ -56,6 +56,41 @@ async function main() {
         res.send(result);
     })
 
+    // we use the HTTP 'get' verb for any endpoints that retrieve data
+    app.get('/food-sightings', async function(req,res){
+
+        // query string are retrieved using req.query
+        // console.log(req.query);
+
+        // to build a search engine, we an empty criteria object (that means we want all the documents)
+        let criteria = {};
+
+        // if the user specifies to search by description, then we add the description to the criteria
+        if (req.query.description) {
+            // adding the 'description' key to the criteria object and assign req.query.description
+            // as the value
+            criteria['description'] = {
+                "$regex": req.query.description,  // use regex expression search
+                "$options": "i"  // ignore case
+            }
+        }
+
+        if (req.query.food) {
+            criteria['food'] = {
+                "$in": [req.query.food]
+            }
+        }
+
+        console.log(criteria);
+
+        let results = await MongoUtil.getDB().collection("sightings").find(criteria).toArray();
+
+        res.status(200);
+        res.json(results);  // send the results back as JSON
+
+    })
+
+
 }
 main();
 // begin listening to server
