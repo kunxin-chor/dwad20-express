@@ -15,6 +15,9 @@ const wax = require('wax-on');
 // whatever we export in MongoUtil.js is available in the MongoUtil variable
 const MongoUtil = require("./MongoUtil");
 
+// import only the getFoodRecordById and addNewFoodRecord functions
+const {getFoodRecordById, addNewFoodRecord} = require('./FoodRecordDAL')
+
 // read in the MONGO_URI variable from the '.env' file
 require('dotenv').config();
 
@@ -31,23 +34,7 @@ app.use(express.urlencoded({
 
 const COLLECTION = "food_records";
 
-async function getFoodRecordById(foodRecordId) {
-    // in the refactored function, don't refer to req or res at all
-    let foodRecord = await MongoUtil.getDB().collection(COLLECTION).findOne({
-        _id:ObjectId(foodRecordId)
-    });
-    return foodRecord;
-}
 
-async function addNewFoodRecord(foodRecordName, calories, tags) {
-   
-    const result = await MongoUtil.getDB().collection(COLLECTION).insertOne({
-        "foodRecordName": foodRecordName,
-        "calories": calories,
-        "tags": tags
-    })
-    return result;
-}
 
 function getTagsFromForm(tags){
     if (!tags) {
